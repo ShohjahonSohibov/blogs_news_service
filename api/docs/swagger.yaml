@@ -1,0 +1,642 @@
+definitions:
+  config.Config:
+    properties:
+      defaultLimit:
+        type: string
+      defaultOffset:
+        type: string
+      defaultPage:
+        type: string
+      environment:
+        description: debug, test, release
+        type: string
+      httpport:
+        type: string
+      httpscheme:
+        type: string
+      postgresDatabase:
+        type: string
+      postgresHost:
+        type: string
+      postgresMaxConnections:
+        type: integer
+      postgresPassword:
+        type: string
+      postgresPort:
+        type: integer
+      postgresUser:
+        type: string
+      rateLimit:
+        type: integer
+      serviceName:
+        type: string
+      version:
+        type: string
+    type: object
+  http.Response:
+    properties:
+      data: {}
+      description:
+        type: string
+      status:
+        type: string
+    type: object
+  models.Blog:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.CreateBlog:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  models.CreateNews:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  models.GetListBlogsResponse:
+    properties:
+      blogs:
+        items:
+          $ref: '#/definitions/models.Blog'
+        type: array
+      count:
+        type: integer
+    type: object
+  models.GetListNewsResponse:
+    properties:
+      count:
+        type: integer
+      news:
+        items:
+          $ref: '#/definitions/models.News'
+        type: array
+    type: object
+  models.News:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.UpdateBlog:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.UpdateNews:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a api gateway
+  termsOfService: https://task.uz
+paths:
+  /blogs/:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of blogs
+      operationId: get_list_blogs
+      parameters:
+      - description: Page for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by title
+        in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of blogs
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.GetListBlogsResponse'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a list of blogs
+      tags:
+      - Blogs
+    post:
+      consumes:
+      - application/json
+      description: Create blogs
+      operationId: create_blogs
+      parameters:
+      - description: CreateBlogBody
+        in: body
+        name: blogs
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateBlog'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Blog data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Blog'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create blogs
+      tags:
+      - Blogs
+  /blogs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a blog by ID
+      operationId: delete_blog
+      parameters:
+      - description: Blog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a blog by ID
+      tags:
+      - Blogs
+    get:
+      consumes:
+      - application/json
+      description: Get a single blog by ID
+      operationId: get_single_blog
+      parameters:
+      - description: Blog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Blog data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Blog'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a single blog by ID
+      tags:
+      - Blogs
+    put:
+      consumes:
+      - application/json
+      description: Update a blog by ID
+      operationId: update_blog
+      parameters:
+      - description: Blog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateBlogBody
+        in: body
+        name: blog
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateBlog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated blog data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Blog'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update a blog by ID
+      tags:
+      - Blogs
+  /config:
+    get:
+      consumes:
+      - application/json
+      description: show service config data when the service environment set to debug
+        mode
+      operationId: get_config
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/config.Config'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: get config data on the debug mode
+  /news/:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of news
+      operationId: get_list_news
+      parameters:
+      - description: Page for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by title
+        in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of news
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.GetListNewsResponse'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a list of news
+      tags:
+      - News
+    post:
+      consumes:
+      - application/json
+      description: Create news
+      operationId: create_news
+      parameters:
+      - description: CreateNewsBody
+        in: body
+        name: news
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateNews'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: News data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.News'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create news
+      tags:
+      - News
+  /news/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a news by ID
+      operationId: delete_news
+      parameters:
+      - description: News ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a news by ID
+      tags:
+      - News
+    get:
+      consumes:
+      - application/json
+      description: Get a single news by ID
+      operationId: get_single_news
+      parameters:
+      - description: News ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: News data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.News'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a single news by ID
+      tags:
+      - News
+    put:
+      consumes:
+      - application/json
+      description: Update a news by ID
+      operationId: update_news
+      parameters:
+      - description: News ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: UpdateNewsBody
+        in: body
+        name: news
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateNews'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated news data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.News'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update a news by ID
+      tags:
+      - News
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: this returns "pong" messsage to show service is working
+      operationId: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response data
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Response'
+      summary: returns "pong" message
+swagger: "2.0"
